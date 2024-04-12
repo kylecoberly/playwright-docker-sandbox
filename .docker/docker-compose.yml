@@ -1,5 +1,23 @@
 services:
-  frontend_test:
+  wrapper:
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+    volumes:
+      - ..:/app
+    ports:
+      - "8080:8080"
+    command: ["npm", "run", "launch_wrapper"]
+    depends_on:
+      frontend:
+        condition: service_healthy
+  frontend:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
       interval: 5s
@@ -23,10 +41,10 @@ services:
     volumes:
       - ..:/app
     depends_on:
-      frontend_test:
+      wrapper:
         condition: service_healthy
     ports:
       - "3001:3001"
     network_mode: host # Allows container access to public frontend
     environment:
-      BASE_URL: "http://localhost:5173" # Public frontend port
+      BASE_URL: "http://localhost:8080" # Public frontend port

@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "vite",
+    "launch_wrapper": "npx http-server wrapper-app",
     "_dev": "vite --host",
     "test:features": "docker compose --project-directory .docker run --rm tests npm run _test:features",
     "tf": "npm run test:features",
@@ -29,6 +30,7 @@
     "vite-tsconfig-paths": "^4.3.2"
   },
   "dependencies": {
+    "http-server": "^14.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }
