@@ -11,17 +11,13 @@ services:
       dockerfile: .docker/Dockerfile
     environment:
       PORT: 3000
-      VITE_AUTH_ZERO_DOMAIN: "${VITE_AUTH_ZERO_DOMAIN}"
-      VITE_AUTH_ZERO_CLIENT_ID: "${VITE_AUTH_ZERO_CLIENT_ID}"
-      VITE_AUTH_ZERO_AUDIENCE: "${VITE_AUTH_ZERO_AUDIENCE}"
-      VITE_ACTIVITY_API_BASE_URL: "${VITE_ACTIVITY_API_BASE_URL}"
     volumes:
       - ..:/app
     ports:
       - "5173:3000"
     command: ["npm", "run", "_serve:test"]
   tests:
-    image: mcr.microsoft.com/playwright:v1.39.0-jammy
+    image: mcr.microsoft.com/playwright:v1.43.0-jammy
     ipc: host # Keeps chrome from OOMing
     working_dir: /app # Default working dir is /
     volumes:

@@ -1,34 +1,18 @@
-import { expect, Route, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-test("listing activities", async ({ page }) => {
-  const activities = [
-    {
-      _id: 1,
-      _type: "article",
-      title: "Some title 1",
-      published: true,
-    },
-    {
-      _id: 2,
-      _type: "article",
-      title: "Some title 2",
-      published: false,
-    },
-    {
-      _id: 3,
-      _type: "article",
-      title: "Some title 3",
-      published: true,
-    },
-  ];
+test("smoke", async ({ page }) => {
+  page.goto("/");
 
-  await page.route("**/activities", (route: Route) => {
-    route.fulfill({
-      body: JSON.stringify({ data: activities }),
-    });
-  });
+  const heading = page.getByText("Some App");
 
-  await page.getByText("Activity Manager").click();
-  await page.getByText("Add activity").click();
-  await expect(page.getByRole("row")).toHaveCount(activities.length + 1);
+  await expect(heading).not.toBeEmpty();
+});
+
+test("get iframe", async ({ page }) => {
+  page.goto("/");
+
+  const iframe = page.frameLocator("iframe");
+  const heading = iframe.getByText("Some heading");
+
+  await expect(heading).not.toBeEmpty();
 });
