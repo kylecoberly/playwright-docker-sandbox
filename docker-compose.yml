@@ -14,9 +14,10 @@ services:
       test: "curl -f http://localhost:3000 || exit 1"
     build:
       context: .
-      dockerfile: Dockerfile
     environment:
       PORT: 3000
+    expose:
+      - "3000"
     volumes:
       - ./app/src:/app/src
     ports:
