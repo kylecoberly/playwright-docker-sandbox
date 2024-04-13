@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "vite",
-    "dev": "vite --host",
+    "start": "vite --host",
     "test": "playwright test --ui-port=3001 --ui-host=0.0.0.0"
   },
   "keywords": [],
