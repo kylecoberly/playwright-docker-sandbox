@@ -9,12 +9,12 @@ This repo contains:
   `http://localhost:3000`, and within the Docker network it's available on
   `http://frontend:3000`.
 - **A static website wrapping the web app.** This is a static website that
-  renders the web app in an iframe. Nginx serves all the files in
-  `features/wrapper` locally at `http://localhost:8080` and within the Docker
-  network at `http://wrapper:80`. This is a mock of the environment the web app
-  will render in.
-- **Playwright tests.** The test file in `features/tests` is a complete UI test
-  of the app, including assertions made through an iframe.
+  renders the web app in an iframe. Nginx serves all the files in `wrapper`
+  locally at `http://localhost:8080` and within the Docker network at
+  `http://wrapper:80`. This is a mock of the environment the web app will render
+  in.
+- **Playwright tests.** The test file in `features/tests` is a browser-based UI
+  test of the app, including assertions made through an iframe.
 - **Playwright UI.** Running `npm run docker` will launch the web app, the
   wrapper site, and Playwright UI. Playwright UI is a browser-based UI workshop
   that runs Playwright tests while also providing a richer suite of analysis
@@ -67,7 +67,7 @@ services:
       frontend:
         condition: service_healthy # Don't start until the web app is running
     build:
-      context: ./features/wrapper # Location of the static site relative to this file
+      context: ./wrapper # Location of the static site relative to this file
     healthcheck:
       test: ["CMD", "service", "nginx", "status"] # Command to report whether static site is running
       interval: 2s
@@ -87,37 +87,35 @@ services:
       - "3000:3000" # Map your computer's `localhost:3000` to the container's port 3000
 ```
 
-If you run `docker compose up`, Docker will run serve the wrapper locally (with
-the web app iframed in) on `http://localhost:8080`. You'll see real-time logs
-from both containers on the terminal, and you can stop the containers with
-`Ctrl + c`.
+`docker compose up` will serve the wrapper locally (with the web app iframed in)
+on `http://localhost:8080`. You'll see real-time logs from both containers on
+the terminal, and you can stop the containers with `Ctrl + c`.
 
 ## Adding Playwright to a Dockerized app
 
-Create a `Dockerfile` close to your test files that uses Playwright's image:
+Create a folder for your test files, Playwright configuration, and Docker setup
+called `features`. Create a `Dockerfile` in it that uses Playwright's image:
 
 ```docker
 FROM mcr.microsoft.com/playwright:v1.43.0-jammy
 WORKDIR /app
 
-COPY . .
+COPY features ./features
+COPY features/playwright.config.ts .
+COPY package*.json .
 RUN npm ci
 
-CMD ["npm", "test"]
+CMD ["npm", "run", "test:ui"]
 ```
 
 Double-check the Playwright version and the test command.
 
 Add Playwright to the project with `npm install -D @playwright/test`. Even
-though the actual Playwright binaries will come from the Docker image, the
-package is still needed for editor integrations. Otherwise, your test files will
-have to import from packages you don't appear to have installed.
+though the Playwright browser binaries will come from the Docker image, the
+package is still needed for the Playwright binary and editor integrations.
 
-Add `test-results` to the `.gitignore` to keep your local test results out of
-the repo.
-
-Configure Playwright by creating a `playwright.config.ts` file in the root
-directory of the project.
+Configure Playwright by creating a `playwright.config.ts` file in the `features`
+directory:
 
 ```typescript
 import type { PlaywrightTestConfig } from "@playwright/test";
@@ -145,13 +143,17 @@ Use these test scripts to launch Playwright UI or run the tests headlessly:
 {
   "scripts": {
     "test": "npm run test:ui",
-    "test:ui": "playwright test -c features/playwright.config.ts --ui-port=3001 --ui-host=0.0.0.0",
-    "test:headless": "playwright test -c features/playwright.config.ts"
+    "test:ui": "playwright test --ui-port=3001 --ui-host=0.0.0.0",
+    "test:headless": "playwright test",
+    "test:ci": "docker compose run tests npm run test:headless"
   }
 }
 ```
 
 Check the location of the Playwright config file.
+
+Add `test-results` to the `.gitignore` to keep your local test results out of
+the repo.
 
 ### Add Playwright to Docker Compose
 

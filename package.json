@@ -7,8 +7,8 @@
     "test": "npm run test:ui",
     "test:ui": "playwright test --ui-port=3001 --ui-host=0.0.0.0",
     "test:headless": "playwright test",
-    "docker": "docker compose up",
-    "test:ci": "docker compose run tests npm run test:headless"
+    "test:ci": "docker compose run tests npm run test:headless",
+    "containers": "docker compose up"
   },
   "keywords": [],
   "author": "",
