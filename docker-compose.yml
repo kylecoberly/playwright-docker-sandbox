@@ -28,7 +28,7 @@ services:
         condition: service_healthy
     build:
       context: .
-      dockerfile: ./features
+      dockerfile: ./features/Dockerfile
     ipc: host # Keeps chrome from OOMing
     environment:
       BASE_URL: "http://wrapper:80"
