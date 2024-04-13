@@ -10,6 +10,8 @@ services:
       start_period: 60s
     ports:
       - "8080:80"
+    expose:
+      - 80
     depends_on:
       frontend:
         condition: service_healthy
@@ -28,6 +30,8 @@ services:
       - ./app/src:/app/src
     ports:
       - "5173:3000"
+    expose:
+      - 3000
     command: ["npm", "run", "_dev"]
   tests:
     build:
@@ -39,6 +43,8 @@ services:
     depends_on:
       wrapper:
         condition: service_healthy
-    network_mode: host # Allows container access to public frontend
+    # network_mode: host # Allows container access to public frontend
+    ports:
+      - "3001:3001"
     environment:
-      BASE_URL: "http://localhost:8080" # Public frontend port
+      BASE_URL: "http://wrapper:80"
