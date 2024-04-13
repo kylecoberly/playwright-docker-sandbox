@@ -1,19 +1,15 @@
 services:
   wrapper:
+    build:
+      context: ./wrapper-app
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
+      test: ["CMD", "service", "nginx", "status"]
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 60s
-    build:
-      context: ..
-      dockerfile: .docker/Dockerfile
-    volumes:
-      - ..:/app
     ports:
-      - "8080:8080"
-    command: ["npm", "run", "launch_wrapper"]
+      - "8080:80"
     depends_on:
       frontend:
         condition: service_healthy
@@ -25,26 +21,24 @@ services:
       retries: 10
       start_period: 60s
     build:
-      context: ..
-      dockerfile: .docker/Dockerfile
+      context: ./app
     environment:
       PORT: 3000
     volumes:
-      - ..:/app
+      - ./app/src:/app/src
     ports:
       - "5173:3000"
-    command: ["npm", "run", "_serve:test"]
+    command: ["npm", "run", "_dev"]
   tests:
-    image: mcr.microsoft.com/playwright:v1.43.0-jammy
+    build:
+      context: ./app
+      dockerfile: Dockerfile.tests
     ipc: host # Keeps chrome from OOMing
-    working_dir: /app # Default working dir is /
     volumes:
-      - ..:/app
+      - ./app/features:/app/features
     depends_on:
       wrapper:
         condition: service_healthy
-    ports:
-      - "3001:3001"
     network_mode: host # Allows container access to public frontend
     environment:
       BASE_URL: "http://localhost:8080" # Public frontend port
