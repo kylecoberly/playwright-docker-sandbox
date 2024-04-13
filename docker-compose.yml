@@ -19,7 +19,7 @@ services:
     expose:
       - "3000"
     volumes:
-      - ./app/src:/app/src
+      - ./src:/app/src
     ports:
       - "3000:3000"
     command: ["npm", "start"]

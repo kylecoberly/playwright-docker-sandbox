@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "start": "vite --host",
-    "test": "playwright test --ui-port=3001 --ui-host=0.0.0.0"
+    "test": "playwright test --ui-port=3001 --ui-host=0.0.0.0",
+    "docker": "docker compose up"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +17,8 @@
     "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "^5.4.5",
-    "vite": "^5.2.8"
+    "vite": "^5.2.8",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "dependencies": {
     "react": "^18.2.0",
