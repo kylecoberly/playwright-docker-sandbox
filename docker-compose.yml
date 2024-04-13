@@ -16,8 +16,6 @@ services:
       context: .
     environment:
       PORT: 3000
-    expose:
-      - "3000"
     volumes:
       - ./src:/app/src
     ports:
@@ -26,7 +24,7 @@ services:
   tests:
     build:
       context: .
-      dockerfile: ./features/Dockerfile
+      dockerfile: ./features
     ipc: host # Keeps chrome from OOMing
     volumes:
       - ./features:/app/features
