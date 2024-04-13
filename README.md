@@ -100,7 +100,6 @@ called `features`. Create a `Dockerfile` in it that uses Playwright's image:
 FROM mcr.microsoft.com/playwright:v1.43.0-jammy
 WORKDIR /app
 
-COPY features ./features
 COPY features/playwright.config.ts .
 COPY package*.json .
 RUN npm ci
@@ -164,17 +163,17 @@ services:
   tests:
     depends_on:
       wrapper:
-        condition: service_healthy # Don't try to launch this until the wrapper (and the app it depends on) are running
+        condition: service_healthy
     build:
-      context: . # Root of the project
-      dockerfile: ./features/Dockerfile # Location of the Playwright Dockerfile
+      context: .
+      dockerfile: ./features/Dockerfile
     ipc: host # Keeps chrome from OOMing
     environment:
-      BASE_URL: "http://wrapper:80" # Base URL for Playwright test browser requests, uses the internal URL
+      BASE_URL: "http://wrapper:80"
     volumes:
-      - ./features:/app/features # Sync the files in the features directory with the ones in the container
+      - ./features/tests:/app/tests
     ports:
-      - "3001:3001" # Host Playwright UI on port 3001
+      - "3001:3001"
 ```
 
 Now running `docker compose up` also launch Playwright UI on

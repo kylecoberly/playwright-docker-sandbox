@@ -33,6 +33,6 @@ services:
     environment:
       BASE_URL: "http://wrapper:80"
     volumes:
-      - ./features:/app/features
+      - ./features/tests:/app/tests
     ports:
       - "3001:3001"
