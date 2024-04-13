@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "start": "vite",
-    "_dev": "npx vite --host",
-    "test": "npx playwright test --ui-port=3001 --ui-host=0.0.0.0"
+    "dev": "vite --host",
+    "test": "playwright test --ui-port=3001 --ui-host=0.0.0.0"
   },
   "keywords": [],
   "author": "",

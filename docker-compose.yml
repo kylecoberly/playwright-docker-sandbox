@@ -1,49 +1,37 @@
 services:
   wrapper:
     build:
-      context: ./wrapper-app
+      context: ./features/wrapper
     healthcheck:
       test: ["CMD", "service", "nginx", "status"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
     ports:
       - "8080:80"
-    expose:
-      - 80
     depends_on:
       frontend:
         condition: service_healthy
   frontend:
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
+      test: "curl -f http://localhost:3000 || exit 1"
     build:
-      context: ./app
+      context: .
+      dockerfile: Dockerfile
     environment:
       PORT: 3000
     volumes:
       - ./app/src:/app/src
     ports:
-      - "5173:3000"
-    expose:
-      - 3000
-    command: ["npm", "run", "_dev"]
+      - "3000:3000"
+    command: ["npm", "run", "dev"]
   tests:
     build:
-      context: ./app
-      dockerfile: Dockerfile.tests
+      context: .
+      dockerfile: ./features/Dockerfile
     ipc: host # Keeps chrome from OOMing
     volumes:
-      - ./app/features:/app/features
+      - ./features:/app/features
     depends_on:
       wrapper:
         condition: service_healthy
-    # network_mode: host # Allows container access to public frontend
     ports:
       - "3001:3001"
     environment:
