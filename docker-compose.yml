@@ -1,37 +1,38 @@
 services:
   wrapper:
+    depends_on:
+      frontend:
+        condition: service_healthy
     build:
       context: ./features/wrapper
     healthcheck:
       test: ["CMD", "service", "nginx", "status"]
+      interval: 2s
     ports:
       - "8080:80"
-    depends_on:
-      frontend:
-        condition: service_healthy
   frontend:
-    healthcheck:
-      test: "curl -f http://localhost:3000 || exit 1"
     build:
       context: .
+    healthcheck:
+      test: "curl -f http://localhost:3000 || exit 1"
+      interval: 2s
     environment:
       PORT: 3000
     volumes:
       - ./src:/app/src
     ports:
       - "3000:3000"
-    command: ["npm", "start"]
   tests:
+    depends_on:
+      wrapper:
+        condition: service_healthy
     build:
       context: .
       dockerfile: ./features
     ipc: host # Keeps chrome from OOMing
-    volumes:
-      - ./features:/app/features
-    depends_on:
-      wrapper:
-        condition: service_healthy
-    ports:
-      - "3001:3001"
     environment:
       BASE_URL: "http://wrapper:80"
+    volumes:
+      - ./features:/app/features
+    ports:
+      - "3001:3001"
